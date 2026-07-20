@@ -82,6 +82,104 @@ architecture mechanism of contador4bits is
                 end process;
                 end architecture;
 
+entity deco2to4 is
+    port (
+        entrada : in std_logic_vector (1 downto 0);
+        saida : out std_logic_vector (3 downto 0)
+    );
+end entity;
+
+architecture machine of deco2to4 is
+    begin
+        process(entrada)
+        begin
+    if entrada = "00" then
+        saida <= "0001";
+    elsif entrada = "01" then
+        saida <= "0010";
+    elsif entrada = "10" then
+        saida <= "0100";
+    elsif entrada = "11" then
+        saida <= "1000";
+    else
+        saida <= "0000";
+    end if;
+end process;
+end architecture;
+
+entity comparador is
+    port (
+        a, b : in std_logic_vector (3 downto 0);
+        maior, menor, igual : out std_logic
+    );
+end entity;
+
+architecture machine of comparador is
+    begin
+        process(a,b)
+        begin
+            if a = b then
+                igual <= '1';
+                maior <= '0';
+                menor <= '0';
+            elsif a < b then
+                menor <= '1';
+                igual <= '0';
+                maior <= '0';
+            elsif a > b then
+                maior <= '1';
+                menor <= '0';
+                igual <= '0';
+            end if;
+            end process;
+            end architecture;
+
+entity shift_register is
+    port (
+        clock, shift, entrada_serial : in std_logic;
+        q : buffer std_logic_vector (3 downto 0)
+    );
+end entity;
+
+architecture machine of shift_register is
+    begin
+        process (clock)
+        begin
+            if rising_edge (clock) then
+                if shift = '1' then
+                    q(0) <= q(1);
+                    q(1) <= q(2);
+                    q(2) <= q(3);
+                    q(3) <= entrada_serial;
+                end if;
+            end if;
+        end process;
+                end architecture;
+
+entity semaforo is
+    port (
+        clock, reset : in std_logic;
+        estado : buffer std_logic_vector (1 downto 0)
+    );
+end entity;
+
+architecture machine of semaforo is
+    begin
+        process(clock)
+        begin
+            if reset = '1' then
+                estado <= "00";
+            elsif rising_edge(clock) then
+                case estado is
+                    when "00" => estado <= "01";
+                    when "01" => estado <= "10";
+                    when "10" => estado <= "00";
+                    when others => estado <= "00";
+                end case;
+            end if;
+        end process;
+            end architecture;
+
                     
 
                 
